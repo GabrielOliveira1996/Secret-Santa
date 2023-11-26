@@ -13,12 +13,13 @@ class ParticipantValidation{
 
     public function create($participants){
         $rules = [
-            'participants' => 'required|array|min:2',
+            'participants' => 'required|array|min:1',
             'participants.*.name' => 'required',
             'participants.*.email' => 'required'
         ];
         $messages = [
             'participants.required' => 'Necessário escrever as informações de todos os participantes.',
+            'participants.array' => 'Necessário que os participantes sejam passados dentro de array.',
             'participants.min' => 'Necessário que tenha pelo menos 2 participantes.',
             'participants.*.name' => 'Necessário passar o nome do participante.',
             'participants.*.email' => 'Necessário passar o email do participante.'
