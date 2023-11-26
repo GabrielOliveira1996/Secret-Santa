@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Validator\PartyValidation;
 use App\Validator\ParticipantValidation;
 use App\Repository\Party\IPartyRepository;
+use App\Providers\Mail;
 
 class ApiPartyController extends Controller
 {
@@ -14,15 +15,18 @@ class ApiPartyController extends Controller
     private $_partyValidation;
     private $_participantValidation;
     private $_partyRepository;
+    private $_mail;
 
     public function __construct(Request $request, 
                                 PartyValidation $partyValidation, 
                                 ParticipantValidation $participantValidation, 
-                                IPartyRepository $partyRepository){
+                                IPartyRepository $partyRepository,
+                                Mail $mail){
         $this->_request = $request;
         $this->_partyValidation = $partyValidation;
         $this->_partyRepository = $partyRepository;
         $this->_participantValidation = $participantValidation;
+        $this->_mail = $mail;
     }
 
     public function create(){
@@ -39,6 +43,7 @@ class ApiPartyController extends Controller
             }
             $createParty = $this->_partyRepository->create($party);
             $createParticipant = $createParty->participants()->createMany($participants);
+            $sendEmail = $this->_mail->send($participants, $party);
             return response()->json([
                 'success' => true,
                 'party' => $party,
