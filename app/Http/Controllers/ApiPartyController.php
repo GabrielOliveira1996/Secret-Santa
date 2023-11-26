@@ -37,10 +37,12 @@ class ApiPartyController extends Controller
             if($participantValidator){
                 throw new \Exception(json_encode($participantValidator->messages()));      
             }
-            $create = $this->_partyRepository->create($party);
+            $createParty = $this->_partyRepository->create($party);
+            $createParticipant = $createParty->participants()->createMany($participants);
             return response()->json([
                 'success' => true,
-                'party_info' => $party
+                'party' => $party,
+                'participants' => $participants
             ], 200);
         }catch(\Exception $e){
             $errors = json_decode($e->getMessage());
