@@ -15,7 +15,8 @@ class Participant extends Model
         'party_owner',
         'name',
         'email',
-        'secret_santa'
+        'secret_santa',
+        'token'
     ];
 
     // relations
