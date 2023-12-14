@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('secret_santa');
-            $table->string('token', 60)->unique();
             $table->timestamps();
         });
     }

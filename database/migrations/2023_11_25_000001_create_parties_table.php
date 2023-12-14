@@ -15,6 +15,7 @@ return new class extends Migration
             $table->decimal('maximum_value'); // maximum gift value.
             $table->string('message', 200); // must contain a maximum of 200 characters. 
             $table->boolean('completed')->default(false);
+            $table->string('token', 60)->unique();
             $table->timestamps();
         });
     }

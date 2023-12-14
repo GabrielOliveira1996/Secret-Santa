@@ -15,17 +15,14 @@ class ParticipantValidation{
         $rules = [
             'participants' => 'required|array|min:2',
             'participants.*.name' => 'required',
-            'participants.*.email' => 'required',
-            'participants.*.token' => 'required|min:60'
+            'participants.*.email' => 'required'
         ];
         $messages = [
             'participants.required' => 'Necessário escrever as informações de todos os participantes.',
             'participants.array' => 'Necessário que os participantes sejam passados dentro de array.',
             'participants.min' => 'Necessário que tenha pelo menos 2 participantes.',
             'participants.*.name.required' => 'Necessário passar o nome do participante.',
-            'participants.*.email.required' => 'Necessário passar o email do participante.',
-            'participants.*.token.required' => 'Necessário passar o token do participante.',
-            'participants.*.token.min' => 'O token deve ter pelo menos 60 caracteres.'
+            'participants.*.email.required' => 'Necessário passar o email do participante.'
         ];
         $validation = Validator::make(['participants' => $participants], $rules, $messages);
         if($validation->fails()){
