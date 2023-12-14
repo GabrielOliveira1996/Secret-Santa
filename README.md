@@ -1,10 +1,10 @@
 # Secret Santa API
 
-##Descrição
+## Descrição
 
 O Secret Santa é uma aplicação dedicada à organização de festas de amigo secreto. Ela gerencia informações sobre a festa, lista de participantes e os desejos de cada participante.
 
-##Configuração do ambiente Docker
+## Configuração do ambiente Docker
 
 1. Clone o repositório para o seu ambiente local: 
 ```git clone git@github.com:GabrielOliveira1996/Secret-Santa.git```
