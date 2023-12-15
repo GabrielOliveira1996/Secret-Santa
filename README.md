@@ -52,7 +52,7 @@ Agora, o servidor estará em execução e pronto para o uso da API.
 
 **URL:** `http://localhost:8700/api/create-party`
 
-#### Estrutura de Dados Esperada
+#### Estrutura de Dados Esperada:
 
 ```json
 {
