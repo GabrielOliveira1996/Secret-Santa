@@ -43,3 +43,9 @@ Nota: Essas configurações de banco de dados são destinadas apenas para uso lo
 ```php artisan serve --host 0.0.0.0```
 
 Agora, o servidor estará em execução e pronto para o uso da API.
+
+## Rotas API
+
+Rota para criação de festa:
+
+```Route::POST - url(http://localhost:8700/api/create-party)```
