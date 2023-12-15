@@ -46,6 +46,34 @@ Agora, o servidor estará em execução e pronto para o uso da API.
 
 ## Rotas API
 
-Rota para criação de festa:
+### Rota para Criação de Festa
 
-```Route::POST - url(http://localhost:8700/api/create-party)```
+**Método:** `POST`
+
+**URL:** `http://localhost:8700/api/create-party`
+
+#### Estrutura de Dados Esperada
+
+```json
+{
+  "date": "2023/12/24",
+  "location": "Casa de Jhon",
+  "maximum_value": 30,
+  "message": "Se organizem pessoal, temos pouco tempo.",
+  "participants": [
+    {
+      "party_id": 1,
+      "party_owner": true,
+      "name": "Gabriel",
+      "email": "gab-oliveira96@hotmail.com",
+      "secret_santa": "Jhon"
+    },
+    {
+      "party_id": 1,
+      "party_owner": false,
+      "name": "Jhon",
+      "email": "superjhonatan.araujo@gmail.com",
+      "secret_santa": "Gabriel"
+    }
+  ]
+}
