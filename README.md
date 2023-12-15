@@ -22,7 +22,7 @@ Nota: Essas configurações de banco de dados são destinadas apenas para uso lo
 
 3. Construa a imagem do Docker. Na raiz do projeto, execute o comando:
 
-```docker compose up -d.```
+```docker compose up -d```
 
 4. Instale as dependências do composer:
 
