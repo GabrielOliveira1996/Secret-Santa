@@ -62,18 +62,12 @@ Agora, o servidor estará em execução e pronto para o uso da API.
   "message": "Se organizem pessoal, temos pouco tempo.",
   "participants": [
     {
-      "party_id": 1,
-      "party_owner": true,
       "name": "Gabriel",
       "email": "gab-oliveira96@hotmail.com",
-      "secret_santa": "Jhon"
     },
     {
-      "party_id": 1,
-      "party_owner": false,
       "name": "Jhon",
       "email": "superjhonatan.araujo@gmail.com",
-      "secret_santa": "Gabriel"
     }
   ]
 }
