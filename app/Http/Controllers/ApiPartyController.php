@@ -32,6 +32,8 @@ class ApiPartyController extends Controller
     public function create(){
         try{
             $party = $this->_request->only(['date', 'location', 'maximum_value', 'message']);
+            $partyToken = $party['token'] = \Str::random(60);
+            //dd($party);
             $partyValidator = $this->_partyValidation->create($party);
             if($partyValidator){
                 throw new \Exception(json_encode($partyValidator->messages()));
@@ -45,15 +47,15 @@ class ApiPartyController extends Controller
             $createParticipant = $createParty->participants()->createMany($participants);
             $sendEmail = $this->_mail->send($participants, $party);
             return response()->json([
-                'success' => true,
+                'status' => 'success',
                 'party' => $party,
                 'participants' => $participants
             ], 200);
         }catch(\Exception $e){
             $errors = json_decode($e->getMessage());
             return response()->json([
-                'success' => false,
-                'errors' => $errors
+                'status' => 'error',
+                'messages' => $errors
             ], 200);
         }
     }
