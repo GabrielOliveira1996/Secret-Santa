@@ -19,7 +19,7 @@ class PartyValidation{
                 'location' => 'required|string',
                 'maximum_value' => 'required|numeric',
                 'message' => 'max:200',
-                'token' => 'required|min:60|unique:participants'
+                'token' => 'required|min:60|unique:parties'
             ];
             $messages = [
                 'date.required' => 'Necessário escrever a data da festa.',
