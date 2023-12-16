@@ -22,7 +22,7 @@ Nota: Essas configurações de banco de dados são destinadas apenas para uso lo
 
 3. Construa a imagem do Docker. Na raiz do projeto, execute o comando:
 
-```docker compose up -d.```
+```docker compose up -d```
 
 4. Instale as dependências do composer:
 
@@ -43,3 +43,31 @@ Nota: Essas configurações de banco de dados são destinadas apenas para uso lo
 ```php artisan serve --host 0.0.0.0```
 
 Agora, o servidor estará em execução e pronto para o uso da API.
+
+## Rotas API
+
+### Rota para Criação de Festa
+
+**Método:** `POST`
+
+**URL:** `http://localhost:8700/api/create-party`
+
+#### Estrutura de Dados Esperada:
+
+```json
+{
+  "date": "2023/12/24",
+  "location": "Casa de Jhon",
+  "maximum_value": 30,
+  "message": "Se organizem pessoal, temos pouco tempo.",
+  "participants": [
+    {
+      "name": "Gabriel",
+      "email": "gab-oliveira96@hotmail.com",
+    },
+    {
+      "name": "Jhon",
+      "email": "superjhonatan.araujo@gmail.com",
+    }
+  ]
+}
