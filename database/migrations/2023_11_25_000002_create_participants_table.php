@@ -15,7 +15,7 @@ return new class extends Migration
             $table->boolean('party_owner')->default(false);
             $table->string('name');
             $table->string('email');
-            $table->string('secret_santa');
+            $table->string('secret_santa')->nullable();
             $table->timestamps();
         });
     }
