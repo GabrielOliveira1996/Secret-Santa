@@ -12,6 +12,7 @@ use App\Providers\Mail;
 class ApiPartyController extends Controller
 {
     private $_request;
+    private $_timezone;
     private $_partyValidation;
     private $_participantValidation;
     private $_partyRepository;
@@ -23,6 +24,7 @@ class ApiPartyController extends Controller
                                 IPartyRepository $partyRepository,
                                 Mail $mail){
         $this->_request = $request;
+        $this->_timezone = date_default_timezone_set('America/Fortaleza');
         $this->_partyValidation = $partyValidation;
         $this->_partyRepository = $partyRepository;
         $this->_participantValidation = $participantValidation;
@@ -32,20 +34,35 @@ class ApiPartyController extends Controller
     public function create(){
         try{
             $party = $this->_request->only(['date', 'location', 'maximum_value', 'message']);
-            $partyToken = $party['token'] = \Str::random(60);
-            //dd($party);
-            $partyValidator = $this->_partyValidation->create($party);
-            if($partyValidator){
-                throw new \Exception(json_encode($partyValidator->messages()));
-            }
             $participants = $this->_request->input('participants');
-            $participantValidator = $this->_participantValidation->create($participants);
-            if($participantValidator){
-                throw new \Exception(json_encode($participantValidator->messages()));      
+            $partyToken = $party['token'] = \Str::random(60);
+            // Validations. //
+            $partyValidator = $this->_partyValidation->create($party);
+            if($partyValidator){ 
+                throw new \Exception(json_encode($partyValidator));
             }
+            $participantValidator = $this->_participantValidation->create($participants);
+            if($participantValidator){   
+                throw new \Exception(json_encode($participantValidator));   
+            }
+            // Database accesses. //
             $createParty = $this->_partyRepository->create($party);
             $createParticipant = $createParty->participants()->createMany($participants);
-            $sendEmail = $this->_mail->send($participants, $party);
+            $partyOwner = $createParty->participants->first();
+            $updatePartyOwner = $partyOwner->update(['party_owner' => true]);
+            // Organization of a data list. //
+            $listOfParticipantsNames = $createParticipant->pluck('name')->all();    
+            $secondaryListOfParticipantsNames = $listOfParticipantsNames;
+            // Process to generate the secret friend for each participant and send emails. //
+            foreach($listOfParticipantsNames as $index => $participantName){
+                $participant = $createParty->participants[$index];
+                do {
+                    $randNumber = rand(0, count($secondaryListOfParticipantsNames) - 1);
+                } while($participantName === $secondaryListOfParticipantsNames[$randNumber]);
+                $update = $createParty->participants[$index]->update(['secret_santa' => $secondaryListOfParticipantsNames[$randNumber]]);
+                $sendEmail = $this->_mail->send($party, $participant, $secondaryListOfParticipantsNames[$randNumber], $partyOwner['name']);
+                array_splice($secondaryListOfParticipantsNames, $randNumber, 1);
+            }
             return response()->json([
                 'status' => 'success',
                 'party' => $party,

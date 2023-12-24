@@ -19,48 +19,56 @@ class Mail{
         $this->_sendSmtpEmail = $sendSmtpEmail;
     }
 
-    public function send($participants, $party){
+    public function send($party, $participant, $secretSanta, $partyOwner){
         try{
-            $this->validateParticipants($participants);
+            $this->validateParticipant($participant);
             
             $sendinblueApiKey = env('SENDINBLUE_API_KEY');
             $configuration = $this->_configuration->getDefaultConfiguration()->setApiKey('api-key', $sendinblueApiKey);
             $apiInstance = new $this->_transictionalEmailsApi(new \GuzzleHttp\Client(), $configuration);
-            foreach ($participants as $participant) {
-                $sendSmtpEmail = new $this->_sendSmtpEmail([
-                    'sender' => ['name' => 'Amigo Secreto', 'email' => 'suporte.amigo.secreto2023@gmail.com'],
-                    'to' => [['email' => $participant['email']]],
-                    'params' => [
-                        'participant_name' => $participant['name'], // Nome do participante.
-                        'party_host' => $participants[0]['name'], // Anfitrião.
-                        'date' => $party['date'], // Data da festa.
-                        'location' => $party['location'], // Local da festa.
-                        'maximum_value' => $party['maximum_value'], // Valor máximo de presente.
-                        'message' => $party['message'] // Messagem.
-                    ],
-                    'subject' => 'Amigo Secreto.',
-                    'templateId' => 3,
-                ]);
-                $result = $apiInstance->sendTransacEmail($sendSmtpEmail);
-            }
-            return response()->json(['success' => true, 'message' => 'E-mails enviados com sucesso.']);
+            $date = explode('/', $party['date']);
+            $sendSmtpEmail = new $this->_sendSmtpEmail([
+                'sender' => ['name' => 'Amigo Secreto', 'email' => 'suporte.amigo.secreto2023@gmail.com'],
+                'to' => [['email' => $participant['email']]],
+                'params' => [
+                    'participant_name' => $participant['name'], // Nome do participante.
+                    'party_host' => $partyOwner, // Anfitrião.
+                    'date' => $date[2] . "/" . $date[1] . "/" . $date[0], // Data da festa.
+                    'location' => $party['location'], // Local da festa.
+                    'maximum_value' => $party['maximum_value'], // Valor máximo de presente.
+                    'message' => $party['message'], // Messagem.
+                    'secret_santa' => $secretSanta // Amigo secreto.
+                ],
+                'subject' => 'Amigo Secreto.',
+                'templateId' => 3,
+            ]);
+            $result = $apiInstance->sendTransacEmail($sendSmtpEmail);
+            return response()->json(['status' => 'success', 'message' => 'E-mails enviados com sucesso.']);
         }catch(\Exception $e){
-            return response()->json(['error' => 'Erro no envio de e-mails.', 'message' => $e->getMessage()], 500);
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
         }catch(\SendinBlue\Client\ApiException $e){
             return $this->apiException($e);
         }
     }
 
-    private function validateParticipants($participants) {
-        if (empty($participants)) {
+    private function validateParticipant($participant) {
+        if (empty($participant)) {
             throw new \Exception('Os participantes não foram fornecidos para o envio do e-mail.');
         }
     }
 
     private function apiException(\SendinBlue\Client\ApiException $e) {
-        if ($e->getCode() == 401) {
+        if ($e->getCode() === 401) {
             return response()->json([
-                'error' => 'Erro na requisição da API Brevo.',
+                'status' => 'error',
+                'messageToDeveloper' => 'Erro na requisição da API Brevo. Código do erro 401. Acesso não foi autorizado.',
+                'message' => 'Houve um problema no envio do e-mail. Nossa equipe foi notificada e está trabalhando para resolver o problema.'
+            ], 500);
+        }
+        if($e->getCode() === 429){
+            return response()->json([
+                'status' => 'error',
+                'messageToDeveloper' => 'Erro na requisição da API Brevo. Código do erro 429. O cliente ultrapassou o limite de taxa ou cota permitido para o envio de emails em seu acesso.',
                 'message' => 'Houve um problema no envio do e-mail. Nossa equipe foi notificada e está trabalhando para resolver o problema.'
             ], 500);
         }
