@@ -26,7 +26,7 @@ class ParticipantValidation{
         ];
         $validation = Validator::make(['participants' => $participants], $rules, $messages);
         if($validation->fails()){
-            return $validation->messages();
+            return $validation->errors();
         }
     }
 }
