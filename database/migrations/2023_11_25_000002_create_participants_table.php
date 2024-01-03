@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email');
             $table->string('secret_santa')->nullable();
+            $table->string('token', 60)->nullable();
             $table->timestamps();
         });
     }
