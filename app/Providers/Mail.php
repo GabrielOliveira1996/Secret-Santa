@@ -19,7 +19,7 @@ class Mail{
         $this->_sendSmtpEmail = $sendSmtpEmail;
     }
 
-    public function send($party, $participant, $secretSanta, $partyOwner){
+    public function send($party, $participant, $secretSanta, $partyOwner, $userToken){
         try{
             $this->validateParticipant($participant);
             
@@ -37,7 +37,8 @@ class Mail{
                     'location' => $party['location'], // Local da festa.
                     'maximum_value' => $party['maximum_value'], // Valor máximo de presente.
                     'message' => $party['message'], // Messagem.
-                    'secret_santa' => $secretSanta // Amigo secreto.
+                    'secret_santa' => $secretSanta, // Amigo secreto.
+                    'token' => "http://localhost:8700/wishlist/?token=$userToken"
                 ],
                 'subject' => 'Amigo Secreto.',
                 'templateId' => 3,
