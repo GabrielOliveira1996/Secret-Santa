@@ -17,8 +17,7 @@ class PartyRepository implements IPartyRepository{
             'date' => $party['date'],
             'location' => $party['location'],
             'maximum_value' => $party['maximum_value'],
-            'message' => $party['message'],
-            'token' => $party['token']
+            'message' => $party['message']
         ]);
     }
 }
