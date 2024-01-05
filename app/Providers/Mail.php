@@ -38,7 +38,7 @@ class Mail{
                     'maximum_value' => $party['maximum_value'], // Valor máximo de presente.
                     'message' => $party['message'], // Messagem.
                     'secret_santa' => $secretSanta, // Amigo secreto.
-                    'token' => "http://localhost:8700/wishlist/?token=$userToken"
+                    'token' => "http://localhost:5173/wishlist/$userToken"
                 ],
                 'subject' => 'Amigo Secreto.',
                 'templateId' => 3,
@@ -72,6 +72,52 @@ class Mail{
                 'messageToDeveloper' => 'Erro na requisição da API Brevo. Código do erro 429. O cliente ultrapassou o limite de taxa ou cota permitido para o envio de emails em seu acesso.',
                 'message' => 'Houve um problema no envio do e-mail. Nossa equipe foi notificada e está trabalhando para resolver o problema.'
             ], 500);
+        }
+    }
+
+    public function sendWishes($participant, $email, $token){
+        try{
+            if(!$participant || !$email){
+                throw new Exception('Participante não foi localizado.');
+            }
+            if(!$token){
+                throw new Exception('Token não está sendo passado corretamente na requisição.');
+            }
+            $sendinblueApiKey = env('SENDINBLUE_API_KEY');
+            $configuration = $this->_configuration->getDefaultConfiguration()->setApiKey('api-key', $sendinblueApiKey);
+            $apiInstance = new $this->_transictionalEmailsApi(new \GuzzleHttp\Client(), $configuration);
+            $sendSmtpEmail = new $this->_sendSmtpEmail([
+                'sender' => ['name' => 'Amigo Secreto', 'email' => 'suporte.amigo.secreto2023@gmail.com'],
+                'to' => [['email' => $email]],
+                'params' => [
+                    'participant_name' => $participant['name'],
+                    'token' => "http://localhost:5173/wishlist/secret-santa/$token/", // Desejos.
+                ],
+                'subject' => 'Amigo Secreto.',
+                'templateId' => 4,
+            ]);
+            $result = $apiInstance->sendTransacEmail($sendSmtpEmail);
+            return response()->json(['status' => 'success', 'message' => 'E-mail enviados com sucesso.']);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }catch(\SendinBlue\Client\ApiException $e){
+            if ($e->getCode() === 401) {
+                return response()->json([
+                    'status' => 'error',
+                    'messageToDeveloper' => 'Erro na requisição da API Brevo. Código do erro 401. Acesso não foi autorizado.',
+                    'message' => 'Houve um problema no envio do e-mail. Nossa equipe foi notificada e está trabalhando para resolver o problema.'
+                ], 500);
+            }
+            if($e->getCode() === 429){
+                return response()->json([
+                    'status' => 'error',
+                    'messageToDeveloper' => 'Erro na requisição da API Brevo. Código do erro 429. O cliente ultrapassou o limite de taxa ou cota permitido para o envio de emails em seu acesso.',
+                    'message' => 'Houve um problema no envio do e-mail. Nossa equipe foi notificada e está trabalhando para resolver o problema.'
+                ], 500);
+            }
         }
     }
 }
