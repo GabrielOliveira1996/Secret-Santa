@@ -83,16 +83,14 @@ class ApiPartyController extends Controller
     
     public function index($token){
         try{ 
-            // Deve capturar informações da festa.
-            // Deve informar quem é o amigo secreto.
-            // Deve exibir a lista de desejos.
             $participant = Participant::where('token', $token)->first();
             if(!$participant){
                 throw new \Exception('Esse participante não existe.');
             }
             return response()->json([
                 'status' => 'success',
-                'participant' => $participant
+                'participant' => $participant,
+                'wishes' => $participant->wishes
             ], 200);
         }catch(\Exception $e){
             return response()->json([
