@@ -32,7 +32,7 @@ class ApiWishlistController extends Controller
             }
             $createWishlist = $participant->wishes()->createMany($wishes);
             $secretSanta = Participant::where('party_id', $participant['party_id'])->where('name', $participant['secret_santa'])->first();
-            $sendEmail = $this->_mail->sendWishes($participant, $secretSanta['email'], $secretSanta['token']);
+            $sendEmail = $this->_mail->sendWishes($participant, $secretSanta['email'], $token);
             return response()->json([
                 'status' => 'success',
                 'party' => $wishes
