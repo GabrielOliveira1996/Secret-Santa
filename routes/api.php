@@ -8,4 +8,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/create-party', [App\Http\Controllers\ApiPartyController::class, 'create']);
-Route::get('/wishlist/{token}', [App\Http\Controllers\ApiPartyController::class, 'index']);
+
+Route::prefix('wishlist')->group(function () {  
+    Route::get('/{token}', [App\Http\Controllers\ApiPartyController::class, 'index']);
+    Route::post('/{token}/create', [App\Http\Controllers\ApiWishlistController::class, 'create']);
+});
