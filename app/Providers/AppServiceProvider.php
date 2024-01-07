@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        App::bind('App\Repository\Party\IPartyRepository', 'App\Repository\Party\PartyRepository');
+        App::bind('App\Interfaces\IMail', 'App\Mail\Brevo');
     }
 
     /**
