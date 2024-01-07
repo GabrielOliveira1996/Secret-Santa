@@ -13,7 +13,6 @@ class Participant extends Model
 
     protected $fillable = [
         'party_id',
-        'party_owner',
         'name',
         'email',
         'secret_santa',
