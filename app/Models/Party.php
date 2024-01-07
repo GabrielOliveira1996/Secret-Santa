@@ -14,8 +14,7 @@ class Party extends Model
             'date',
             'location',
             'maximum_value',
-            'message',
-            'token'
+            'message'
     ];
     // relations
     public function participants(){
