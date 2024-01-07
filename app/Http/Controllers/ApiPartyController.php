@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Validator\PartyValidation;
 use App\Validator\ParticipantValidation;
-use App\Repository\Party\IPartyRepository;
-use App\Providers\Mail;
 use App\Models\Participant;
+use App\Models\Party;
+use App\Interfaces\IMail;
 
 class ApiPartyController extends Controller
 {
@@ -16,68 +16,71 @@ class ApiPartyController extends Controller
     private $_timezone;
     private $_partyValidation;
     private $_participantValidation;
-    private $_partyRepository;
     private $_mail;
 
     public function __construct(Request $request, 
                                 PartyValidation $partyValidation, 
                                 ParticipantValidation $participantValidation, 
-                                IPartyRepository $partyRepository,
-                                Mail $mail){
+                                IMail $mail){
         $this->_request = $request;
         $this->_timezone = date_default_timezone_set('America/Fortaleza');
         $this->_partyValidation = $partyValidation;
-        $this->_partyRepository = $partyRepository;
         $this->_participantValidation = $participantValidation;
         $this->_mail = $mail;
     }
 
     public function create(){
         try{
-            $party = $this->_request->only(['date', 'location', 'maximum_value', 'message']);
-            $participants = $this->_request->input('participants');
             // Validations. //
+            $party = $this->_request->only(['date', 'location', 'maximum_value', 'message']);
             $partyValidator = $this->_partyValidation->create($party);
             if($partyValidator){ 
-                throw new \Exception(json_encode($partyValidator));
+                throw new \Exception(json_encode($partyValidator), 400);
             }
+            $participants = $this->_request->input('participants');
             $participantValidator = $this->_participantValidation->create($participants);
             if($participantValidator){   
-                throw new \Exception(json_encode($participantValidator));   
+                throw new \Exception(json_encode($participantValidator), 400);   
             }
             // Database accesses. //
-            $createParty = $this->_partyRepository->create($party);
-            $createParticipant = $createParty->participants()->createMany($participants);
+            $createParty = Party::create([
+                'date' => $party['date'],
+                'location' => $party['location'],
+                'maximum_value' => $party['maximum_value'],
+                'message' => $party['message']
+            ]);
+            $createParticipants = $createParty->participants()->createMany($participants);
             $partyOwner = $createParty->participants->first();
-            $updatePartyOwner = $partyOwner->update(['party_owner' => true]);
             // Organization of a data list. //
-            $listOfParticipantsNames = $createParticipant->pluck('name')->all();    
-            $secondaryListOfParticipantsNames = $listOfParticipantsNames;
+            $listOfParticipantsNames = $createParticipants->pluck('name')->all();    
+            $listOfSecretFriendsNames = $listOfParticipantsNames;
             // Process to generate the secret friend for each participant and send emails. //
             foreach($listOfParticipantsNames as $index => $participantName){
                 $participant = $createParty->participants[$index];
-                $userToken = \Str::random(60); // Deve ser o token do usuário.
+                // This should be the user's token.
+                $userToken = \Str::random(60);
                 do {
-                    $randNumber = rand(0, count($secondaryListOfParticipantsNames) - 1);
-                } while($participantName === $secondaryListOfParticipantsNames[$randNumber]);
-                $update = $createParty->participants[$index]->update([
-                                                                        'secret_santa' => $secondaryListOfParticipantsNames[$randNumber],
-                                                                        'token' => $userToken
-                                                                    ]);
-                $sendEmail = $this->_mail->send($party, $participant, $secondaryListOfParticipantsNames[$randNumber], $partyOwner['name'], $userToken);
-                array_splice($secondaryListOfParticipantsNames, $randNumber, 1);
+                    $randNumber = rand(0, count($listOfSecretFriendsNames) - 1);
+                } while($participantName === $listOfSecretFriendsNames[$randNumber]);
+                $update = $createParty->participants[$index]->update(['secret_santa' => $listOfSecretFriendsNames[$randNumber],
+                                                                        'token' => $userToken]);
+                $sendEmail = $this->_mail->sendPartyInformations($party, 
+                                                                    $participant, 
+                                                                    $listOfSecretFriendsNames[$randNumber], 
+                                                                    $partyOwner['name'],
+                                                                    $userToken);
+                // Removes the name of the secret friend that has already been chosen.
+                array_splice($listOfSecretFriendsNames, $randNumber, 1); 
             }
             return response()->json([
-                'status' => 'success',
                 'party' => $party,
                 'participants' => $participants
             ], 200);
         }catch(\Exception $e){
             $errors = json_decode($e->getMessage());
             return response()->json([
-                'status' => 'error',
                 'messages' => $errors
-            ], 200);
+            ], $e->getCode());
         }
     }
     
@@ -85,7 +88,7 @@ class ApiPartyController extends Controller
         try{ 
             $participant = Participant::where('token', $token)->first();
             if(!$participant){
-                throw new \Exception('Esse participante não existe.');
+                throw new \Exception('Esse participante não existe.', 400);
             }
             return response()->json([
                 'status' => 'success',
@@ -96,7 +99,7 @@ class ApiPartyController extends Controller
             return response()->json([
                 'status' => 'error',
                 'messages' => $e->getMessage()
-            ], 200);
+            ], $e->getCode());
         }
     }
     
