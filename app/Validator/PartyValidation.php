@@ -17,7 +17,7 @@ class PartyValidation{
             'date' => 'required|date',
             'location' => 'required|string',
             'maximum_value' => 'required|numeric|min:1',
-            'message' => 'max:200'
+            'message' => 'required|max:200'
         ];
         $messages = [
             'date.required' => 'Preencha a data da festa.',
@@ -27,6 +27,7 @@ class PartyValidation{
             'maximum_value.required' => 'Preencha o valor máximo do presente.',
             'maximum_value.numeric' => 'Valor do presente deve conter apenas números.',
             'maximum_value.min' => 'Valor do presente precisa ser maior que 0.',
+            'message.required' => 'Escreva alguma mensagem para os seus amigos.',
             'message.max' => 'Mensagem deve conter no máximo 200 caracteres.'
         ];
         $validation = Validator::make($party, $rules, $messages);
