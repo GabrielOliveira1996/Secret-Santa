@@ -88,17 +88,15 @@ class ApiPartyController extends Controller
         try{ 
             $participant = Participant::where('token', $token)->first();
             if(!$participant){
-                throw new \Exception('Esse participante não existe.', 400);
+                throw new \Exception('Participante não foi localizado.', 400);
             }
             return response()->json([
-                'status' => 'success',
                 'participant' => $participant,
                 'wishes' => $participant->wishes
             ], 200);
         }catch(\Exception $e){
             return response()->json([
-                'status' => 'error',
-                'messages' => $e->getMessage()
+                'message' => $e->getMessage()
             ], $e->getCode());
         }
     }
