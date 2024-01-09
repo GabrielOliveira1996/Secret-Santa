@@ -29,4 +29,26 @@ class ParticipantValidation{
             return $validation->errors();
         }
     }
+
+    public function thereAreParticipantsWithTheSameName($participants){
+        $uniqueNames = [];
+        $duplicateNames = [];
+        foreach ($participants as $participant) {
+            $name = $participant['name'];
+            if (in_array($name, $uniqueNames)) {
+                // Duplicate name found. //
+                $duplicateNames[] = $name;
+            } else {
+                // Unique name, add to the list of unique names. //
+                $uniqueNames[] = $name;
+            }
+        }
+        if (!empty($duplicateNames)) {
+            // There are duplicate names. //
+            return "Existem nomes iguais em lista de participantes.";
+        } else {
+            // There are no duplicate names. //
+            return null;
+        }
+    }
 }

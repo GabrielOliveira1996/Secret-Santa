@@ -38,6 +38,11 @@ class ApiPartyController extends Controller
                 throw new \Exception(json_encode($partyValidator), 400);
             }
             $participants = $this->_request->input('participants');
+            // Testando validação.
+            $participantNamesValidate = $this->_participantValidation->thereAreParticipantsWithTheSameName($participants);
+            if($participantNamesValidate){
+                throw new \Exception(json_encode($participantNamesValidate), 400);
+            }
             $participantValidator = $this->_participantValidation->create($participants);
             if($participantValidator){   
                 throw new \Exception(json_encode($participantValidator), 400);   
