@@ -45,7 +45,7 @@ class ParticipantValidation{
         }
         if (!empty($duplicateNames)) {
             // There are duplicate names. //
-            return "Existem nomes iguais em lista de participantes.";
+            return ["participant" => "Existem nomes iguais em lista de participantes."];
         } else {
             // There are no duplicate names. //
             return null;
