@@ -52,19 +52,19 @@ class Brevo implements IMail{
         }
     }
 
-    public function sendWishList($participantName, $secretSantaEmail, $participantToken){
+    public function sendWishList($secretSantaName, $secretSantaEmail, $participantToken){
         try{
             $sendSmtpEmail = new $this->_sendSmtpEmail([
                 'sender' => ['name' => self::COMPANY_NAME, 'email' => self::SUPPORT_EMAIL],
                 'to' => [['email' => $secretSantaEmail]],
                 'params' => [
-                    'participant_name' => $participantName,
-                    'token' => self::WISHES_URL_BASE . "secret-santa/$token/", // Secret Santa wishlist url
+                    'participant_name' => $secretSantaName,
+                    'token' => self::WISHES_URL_BASE . "$participantToken", // Secret Santa wishlist url
                 ],
                 'subject' => 'Lista de desejos do seu amigo',
-                'templateId' => TEMPLATE_WITH_SECRET_SANTA_WISH_LIST,
+                'templateId' => self::TEMPLATE_WITH_SECRET_SANTA_WISH_LIST,
             ]);
-            $result = $apiInstance->sendTransacEmail($sendSmtpEmail);
+            $result = $this->_apiInstance->sendTransacEmail($sendSmtpEmail);
             return response()->json(['message' => 'E-mail enviados com sucesso.'], 200);
         }catch(ApiException $e){
             return response()->json([
