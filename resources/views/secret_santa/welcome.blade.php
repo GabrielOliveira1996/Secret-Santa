@@ -121,6 +121,6 @@
 
     </body>
 
-    <script src="{{ asset('javascript/addParticipant.js') }}"></script>
+    <script src="{{ asset('javascript/Secret Santa/welcomePage.js') }}"></script>
 
 </html>
