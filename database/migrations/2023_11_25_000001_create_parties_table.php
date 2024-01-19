@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('location');
-            $table->decimal('maximum_value'); // maximum gift value.
+            $table->decimal('maximumValue'); // maximum gift value.
             $table->string('message', 200); // must contain a maximum of 200 characters. 
             $table->boolean('completed')->default(false);
             $table->timestamps();

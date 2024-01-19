@@ -16,7 +16,7 @@ class PartyValidation{
         $rules = [
             'date' => 'required|date',
             'location' => 'required|string',
-            'maximum_value' => 'required|numeric|min:1',
+            'maximumValue' => 'required|numeric|min:1',
             'message' => 'required|max:200'
         ];
         $messages = [
@@ -24,9 +24,9 @@ class PartyValidation{
             'date.date' => 'Preencha a data corretamente.',
             'location.required' => 'Preencha o local da festa.',
             'location.string' => 'Preencha o local da festa corretamente. Deve ter apenas letras.',
-            'maximum_value.required' => 'Preencha o valor máximo do presente.',
-            'maximum_value.numeric' => 'Valor do presente deve conter apenas números.',
-            'maximum_value.min' => 'Valor do presente precisa ser maior que 0.',
+            'maximumValue.required' => 'Preencha o valor máximo do presente.',
+            'maximumValue.numeric' => 'Valor do presente deve conter apenas números.',
+            'maximumValue.min' => 'Valor do presente precisa ser maior que 0.',
             'message.required' => 'Escreva alguma mensagem para os seus amigos.',
             'message.max' => 'Mensagem deve conter no máximo 200 caracteres.'
         ];

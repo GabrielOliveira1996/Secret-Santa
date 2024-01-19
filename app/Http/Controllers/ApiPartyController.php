@@ -32,7 +32,7 @@ class ApiPartyController extends Controller
     public function create(){
         try{
             // Validations. //
-            $party = $this->_request->only(['date', 'location', 'maximum_value', 'message']);
+            $party = $this->_request->only(['date', 'location', 'maximumValue', 'message']);
             $partyValidator = $this->_partyValidation->create($party);
             if($partyValidator){ 
                 throw new \Exception(json_encode($partyValidator), 400);
@@ -51,7 +51,7 @@ class ApiPartyController extends Controller
             $createParty = Party::create([
                 'date' => $party['date'],
                 'location' => $party['location'],
-                'maximum_value' => $party['maximum_value'],
+                'maximumValue' => $party['maximumValue'],
                 'message' => $party['message']
             ]);
             $createParticipants = $createParty->participants()->createMany($participants);

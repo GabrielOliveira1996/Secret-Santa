@@ -11,11 +11,11 @@ use App\Interfaces\IMail;
 // Brevo is the old Sendinblue. //
 class Brevo implements IMail{
     // Constants. //
-    const WISHES_URL_BASE = 'http://localhost:5173/wishlist/';
+    const WISHES_URL_BASE = 'http://localhost:8700/wishlist/';
     const COMPANY_NAME = 'Secret Santa';
     const SUPPORT_EMAIL = 'suporte.amigo.secreto2023@gmail.com';
-    const TEMPLATE_WITH_PARTY_INFORMATION = 3;
-    const TEMPLATE_WITH_SECRET_SANTA_WISH_LIST = 4;
+    const TEMPLATE_WITH_PARTY_INFORMATION = 6;
+    const TEMPLATE_WITH_SECRET_SANTA_WISH_LIST = 7;
 
     public function __construct(){
         $this->_sendinblueApiKey = env('SENDINBLUE_API_KEY');
@@ -35,7 +35,7 @@ class Brevo implements IMail{
                     'party_host' => $partyOwner, // Party Owner.
                     'date' => $date->format('d/m/Y'), // Party Date.
                     'location' => $party['location'], // Party Location.
-                    'maximum_value' => $party['maximum_value'], // Maximum Gift Value.
+                    'maximum_value' => $party['maximumValue'], // Maximum Gift Value.
                     'message' => $party['message'], // Message.
                     'secret_santa' => $secretSanta, // Secret Santa.
                     'token' => self::WISHES_URL_BASE . "$userToken",

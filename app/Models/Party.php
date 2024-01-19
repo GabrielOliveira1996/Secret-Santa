@@ -13,7 +13,7 @@ class Party extends Model
     protected $fillable = [
             'date',
             'location',
-            'maximum_value',
+            'maximumValue',
             'message'
     ];
     // relations
