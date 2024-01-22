@@ -11,7 +11,7 @@ use App\Interfaces\IMail;
 // Brevo is the old Sendinblue. //
 class Brevo implements IMail{
     // Constants. //
-    const WISHES_URL_BASE = 'http://localhost:8700/wishlist/';
+    const WISHES_URL_BASE = 'http://localhost:8700/secret-santa/wishlist/';
     const COMPANY_NAME = 'Secret Santa';
     const SUPPORT_EMAIL = 'suporte.amigo.secreto2023@gmail.com';
     const TEMPLATE_WITH_PARTY_INFORMATION = 6;
@@ -52,14 +52,14 @@ class Brevo implements IMail{
         }
     }
 
-    public function sendWishList($secretSantaName, $secretSantaEmail, $participantToken){
+    public function sendWishList($secretSantaName, $secretSantaEmail, $secretSantaWishes){
         try{
             $sendSmtpEmail = new $this->_sendSmtpEmail([
                 'sender' => ['name' => self::COMPANY_NAME, 'email' => self::SUPPORT_EMAIL],
                 'to' => [['email' => $secretSantaEmail]],
                 'params' => [
                     'participant_name' => $secretSantaName,
-                    'token' => self::WISHES_URL_BASE . "$participantToken", // Secret Santa wishlist url
+                    'wishes' => $secretSantaWishes, // Secret Santa wishlist.
                 ],
                 'subject' => 'Lista de desejos do seu amigo',
                 'templateId' => self::TEMPLATE_WITH_SECRET_SANTA_WISH_LIST,
